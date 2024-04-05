@@ -47,14 +47,11 @@ public struct ParallaxScrollView<
             headerBackground()
 
             ScrollView {
-                offsetReader
                 VStack(spacing: 0) {
+                    offsetReader
                     header()
                     content
                 }
-                // `offsetReader`, despite having zero height,
-                // pushes down the scrolling content by 8pt.
-                .offset(y: -8)
             }
             .coordinateSpace(name: Namespace.parallaxScrollView)
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset = $0 }
