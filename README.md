@@ -1,6 +1,6 @@
 # ParallaxScrollView
 
-An extended `SwiftUI.ScrollView` with support for a sticky header that collapses to the minimum size required by its header during scroll.
+An extended `SwiftUI.ScrollView` with support for a sticky header that collapses to a compact size during scroll.
 
 ## Instalation
 
