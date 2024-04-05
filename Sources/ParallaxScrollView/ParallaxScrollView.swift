@@ -36,6 +36,7 @@ public struct ParallaxScrollView<
     Background: View,
     Content: View
 >: View {
+    private let showsIndicators: Bool
     private let parallaxHeader: ParallaxHeader<Header, Background>
     private let content: Content
 
@@ -46,7 +47,7 @@ public struct ParallaxScrollView<
         ZStack(alignment: .top) {
             headerBackground()
 
-            ScrollView {
+            ScrollView(showsIndicators: showsIndicators) {
                 VStack(spacing: 0) {
                     offsetReader
                     header()
@@ -56,13 +57,26 @@ public struct ParallaxScrollView<
             .coordinateSpace(name: Namespace.parallaxScrollView)
             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset = $0 }
         }
+        .onAppear {
+            parallaxHeader.isCollapsed?.wrappedValue = isCollapsed
+        }
+        .onChange(of: isCollapsed) { newValue in
+            parallaxHeader.isCollapsed?.wrappedValue = newValue
+        }
     }
 
     /// Creates a new ``ParallaxScrollView``.
     /// - Parameters:
+    ///   - showsIndicators: A Boolean value that indicates whether the scroll
+    ///     view displays the scrollable component of the content offset. Defaults to `true`.
     ///   - parallaxHeader: A builder providing a `ParallaxHeader` instance. This is not a view builder.
     ///   - content: A view builder for the regular content for the scroll view.
-    public init(parallaxHeader: () -> ParallaxHeader<Header, Background>, @ViewBuilder content: () -> Content) {
+    public init(
+        showsIndicators: Bool = true,
+        parallaxHeader: () -> ParallaxHeader<Header, Background>,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.showsIndicators = showsIndicators
         self.parallaxHeader = parallaxHeader()
         self.content = content()
     }
@@ -83,7 +97,7 @@ private extension ParallaxScrollView {
         Group {
             Color.clear.background {
                 parallaxHeader
-                    .background(isCollapsed)
+                    .background
             }
             .clipped()
             .offset(y: headerBackgroundOffset)
@@ -146,5 +160,73 @@ private extension ParallaxScrollView {
 
     var expandedHeight: CGFloat {
         parallaxHeader.defaultHeight ?? minimumHeight
+    }
+}
+
+func myHeader(isCollapsed: Bool) -> some View {
+    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Header")
+                                .bold()
+                            Text("Another")
+                        }
+                        .foregroundStyle(isCollapsed ? .green : .white)
+
+                        Spacer()
+
+                        SwiftUI.Button("Push me") {
+                            print("tapped!")
+                        }
+                    }
+                    .padding()
+}
+
+func myImage() -> Image {
+    Image(systemName: "person")
+}
+
+func myScrollableContent() -> some View {
+    Text("Content")
+}
+
+#Preview {
+    Sample()
+}
+
+struct Sample: View {
+    @State var isCollapsed = true
+
+    var body: some View {
+        ParallaxScrollView {
+            ParallaxHeader(
+                defaultHeight: 300,
+                isCollapsed: $isCollapsed
+            ) {
+                myHeader(isCollapsed: isCollapsed)
+                    .background {
+                        LinearGradient(
+                            colors: [
+                                .clear,
+                                .black.opacity(0.4),
+                                .black
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                    }
+            } background: {
+                // an example of an image that blurs when collapsed.
+                myImage()
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .animation(nil, value: isCollapsed)
+                    .blur(radius: isCollapsed ? 3 : 0)
+                    .animation(.snappy, value: isCollapsed)
+            }
+        } content: {
+            myScrollableContent()
+                .frame(height: 1000)
+        }
     }
 }

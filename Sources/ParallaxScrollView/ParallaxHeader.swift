@@ -25,8 +25,9 @@ import SwiftUI
 /// The model required by the ``ParallaxScrollView``'s `init`.
 public struct ParallaxHeader<Header: View, Background: View> {
     let defaultHeight: CGFloat?
+    let isCollapsed: Binding<Bool>?
     let header: Header
-    let background: (_ isCollapsed: Bool) -> Background
+    let background: Background
 
     /// Creates a new ``ParallaxHeader``.
     /// 
@@ -37,18 +38,21 @@ public struct ParallaxHeader<Header: View, Background: View> {
     /// - Parameters:
     ///   - defaultHeight: The default height for the header, akin to an expanded height. If `nil`, the header size
     ///   is used, resulting in an ever-collapsed header.
+    ///   - isCollapsed: A `Binding` that will be updated based on the current collapsed state of the view. Useful
+    ///   for applying tweaks to the header and background based on their states.
     ///   - header: The header view builder. The size of this view determines the size of the collapsed state. This view
     ///   receives and handles touches normally.
     ///   - background: The background view builder. Its size is determined by the `defaultHeight`, and will adjust
-    ///   as needed until the minimum, collapsed size during scroll. The `isCollapsed` parameter is provided in case
-    ///   tweaks (i.e.: blur) are to be applied when collapsed. The background doesn't receive touches.
+    ///   as needed until the minimum, collapsed size during scroll. The background doesn't receive touches.
     public init(
         defaultHeight: CGFloat?,
+        isCollapsed: Binding<Bool>? = nil,
         @ViewBuilder header: () -> Header,
-        @ViewBuilder background: @escaping (_ isCollapsed: Bool) -> Background
+        @ViewBuilder background: () -> Background
     ) {
         self.defaultHeight = defaultHeight
+        self.isCollapsed = isCollapsed
         self.header = header()
-        self.background = background
+        self.background = background()
     }
 }
