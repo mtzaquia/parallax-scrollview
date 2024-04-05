@@ -49,7 +49,8 @@ ParallaxScrollView {
 
 ## Acknoledgements
 
-Thanks to [@danielsaidi](https://github.com/danielsaidi)'s [ScrollKit](https://github.com/danielsaidi/ScrollKit) for inspiration on offset tracking using `PreferenceKey`.
+- Thanks to [@chrisjrex](https://github.com/chrisjrex) for rubber ducking on a nearly daily basis.
+- Thanks to [@danielsaidi](https://github.com/danielsaidi)'s [ScrollKit](https://github.com/danielsaidi/ScrollKit) for inspiration on offset tracking using `PreferenceKey`.
 
 ## License
 
