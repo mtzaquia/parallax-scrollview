@@ -43,19 +43,16 @@ public struct ParallaxScrollView<
     @State var minimumHeight: CGFloat = .zero
 
     public var body: some View {
-        ZStack(alignment: .top) {
-            headerBackground()
-
-            ScrollView {
-                VStack(spacing: 0) {
-                    offsetReader
-                    header()
-                    content
-                }
+        ScrollView {
+            VStack(spacing: 0) {
+                offsetReader
+                header()
+                content
             }
-            .coordinateSpace(name: Namespace.parallaxScrollView)
-            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset = $0 }
         }
+        .coordinateSpace(name: Namespace.parallaxScrollView)
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset = $0 }
+        .background(alignment: .top) { headerBackground() }
     }
 
     /// Creates a new ``ParallaxScrollView``.
