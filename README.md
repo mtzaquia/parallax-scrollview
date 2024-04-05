@@ -14,7 +14,38 @@ dependencies: [
 
 ## Usage
 
-_TBA..._
+Use `ParallaxScrollView` like a regular, vertical scroll view. The main difference is the `header` parameter. 
+
+```swift
+ParallaxScrollView {
+  ParallaxHeader(defaultHeight: 300) { // an arbitrary, expanded height, or `nil`.
+    // an example of a header with a gradient for sufficient contrast with the background image.
+    myHeader()
+      .background {
+        LinearGradient(
+          colors: [
+            .clear,
+            .black.opacity(0.4),
+            .black
+          ],
+          startPoint: .top,
+          endPoint: .bottom
+        )
+        .ignoresSafeArea() // safe area applies when collapsed.
+      }
+  } background: { isCollapsed in
+    // an example of an image that blurs when collapsed.
+    myImage()
+      .resizable()
+      .aspectRatio(contentMode: .fill)
+      .animation(nil, value: isCollapsed) // avoids unwanted frame animation during scroll.
+      .blur(radius: isCollapsed ? 3 : 0)
+      .animation(.snappy, value: isCollapsed)
+  }
+} content: {
+  myScrollableContent()
+}
+```
 
 ## Acknoledgements
 
