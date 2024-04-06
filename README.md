@@ -17,8 +17,12 @@ dependencies: [
 Use `ParallaxScrollView` like a regular, vertical scroll view. The main difference is the `header` parameter. 
 
 ```swift
+@State var isCollapsed = false
+
+/* ... */
+
 ParallaxScrollView {
-  ParallaxHeader(defaultHeight: 300) { // an arbitrary, expanded height, or `nil`.
+  ParallaxHeader(defaultHeight: 300, isCollapsed: $isCollapsed) { // an arbitrary, expanded height, or `nil`.
     // an example of a header with a gradient for sufficient contrast with the background image.
     myHeader()
       .background {
@@ -33,7 +37,7 @@ ParallaxScrollView {
         )
         .ignoresSafeArea() // safe area applies when collapsed.
       }
-  } background: { isCollapsed in
+  } background: {
     // an example of an image that blurs when collapsed.
     myImage()
       .resizable()
