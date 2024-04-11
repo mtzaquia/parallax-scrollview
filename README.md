@@ -8,7 +8,7 @@ An extended `SwiftUI.ScrollView` with support for a sticky header that collapses
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/mtzaquia/parallax-scrollview.git", from: "1.0.0"),
+  .package(url: "https://github.com/mtzaquia/parallax-scrollview.git", from: "1.0.2"),
 ],
 ```
 
@@ -22,7 +22,7 @@ Use `ParallaxScrollView` like a regular, vertical scroll view. The main differen
 /* ... */
 
 ParallaxScrollView {
-  ParallaxHeader(defaultHeight: 300, isCollapsed: $isCollapsed) { // an arbitrary, expanded height, or `nil`.
+  ParallaxHeader(defaultHeight: 300) { // an arbitrary, expanded height, or `nil`.
     // an example of a header with a gradient for sufficient contrast with the background image.
     myHeader()
       .background {
@@ -48,6 +48,8 @@ ParallaxScrollView {
   }
 } content: {
   myScrollableContent()
+} onCollapsedChanged: { // optional callback to observe collapse state changes to tweak header/background design accordingly.
+  isCollapsed = $0 
 }
 ```
 
