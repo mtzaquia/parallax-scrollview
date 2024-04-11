@@ -39,6 +39,7 @@ public struct ParallaxScrollView<
     private let showsIndicators: Bool
     private let parallaxHeader: ParallaxHeader<Header, Background>
     private let content: Content
+    private let onCollapsedChanged: (_ isCollapsed: Bool) -> Void
 
     @State var offset = CGPoint()
     @State var minimumHeight: CGFloat = .zero
@@ -63,6 +64,7 @@ public struct ParallaxScrollView<
         .onChange(of: isCollapsed) { newValue in
             parallaxHeader.isCollapsed?.wrappedValue = newValue
         }
+        .onChange(of: isCollapsed, perform: onCollapsedChanged)
     }
 
     /// Creates a new ``ParallaxScrollView``.
@@ -74,11 +76,13 @@ public struct ParallaxScrollView<
     public init(
         showsIndicators: Bool = true,
         parallaxHeader: () -> ParallaxHeader<Header, Background>,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> Content,
+        onCollapsedChanged: @escaping (_ isCollapsed: Bool) -> Void = { _ in }
     ) {
         self.showsIndicators = showsIndicators
         self.parallaxHeader = parallaxHeader()
         self.content = content()
+        self.onCollapsedChanged = onCollapsedChanged
     }
 }
 
@@ -160,73 +164,5 @@ private extension ParallaxScrollView {
 
     var expandedHeight: CGFloat {
         parallaxHeader.defaultHeight ?? minimumHeight
-    }
-}
-
-func myHeader(isCollapsed: Bool) -> some View {
-    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Header")
-                                .bold()
-                            Text("Another")
-                        }
-                        .foregroundStyle(isCollapsed ? .green : .white)
-
-                        Spacer()
-
-                        SwiftUI.Button("Push me") {
-                            print("tapped!")
-                        }
-                    }
-                    .padding()
-}
-
-func myImage() -> Image {
-    Image(systemName: "person")
-}
-
-func myScrollableContent() -> some View {
-    Text("Content")
-}
-
-#Preview {
-    Sample()
-}
-
-struct Sample: View {
-    @State var isCollapsed = true
-
-    var body: some View {
-        ParallaxScrollView {
-            ParallaxHeader(
-                defaultHeight: 300,
-                isCollapsed: $isCollapsed
-            ) {
-                myHeader(isCollapsed: isCollapsed)
-                    .background {
-                        LinearGradient(
-                            colors: [
-                                .clear,
-                                .black.opacity(0.4),
-                                .black
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .ignoresSafeArea()
-                    }
-            } background: {
-                // an example of an image that blurs when collapsed.
-                myImage()
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .animation(nil, value: isCollapsed)
-                    .blur(radius: isCollapsed ? 3 : 0)
-                    .animation(.snappy, value: isCollapsed)
-            }
-        } content: {
-            myScrollableContent()
-                .frame(height: 1000)
-        }
     }
 }

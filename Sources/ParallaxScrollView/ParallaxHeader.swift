@@ -25,12 +25,13 @@ import SwiftUI
 /// The model required by the ``ParallaxScrollView``'s `init`.
 public struct ParallaxHeader<Header: View, Background: View> {
     let defaultHeight: CGFloat?
+    @available(*, deprecated)
     let isCollapsed: Binding<Bool>?
     let header: Header
     let background: Background
 
     /// Creates a new ``ParallaxHeader``.
-    /// 
+    ///
     /// - Note: The `background` view is not interactive, and will ignore touches.
     /// - Important: The default height must not be smaller than the intrinsic size of the `header` view. Use `nil` to obtain a
     ///   non-expanding header.
@@ -38,15 +39,25 @@ public struct ParallaxHeader<Header: View, Background: View> {
     /// - Parameters:
     ///   - defaultHeight: The default height for the header, akin to an expanded height. If `nil`, the header size
     ///   is used, resulting in an ever-collapsed header.
-    ///   - isCollapsed: A `Binding` that will be updated based on the current collapsed state of the view. Useful
-    ///   for applying tweaks to the header and background based on their states.
     ///   - header: The header view builder. The size of this view determines the size of the collapsed state. This view
     ///   receives and handles touches normally.
     ///   - background: The background view builder. Its size is determined by the `defaultHeight`, and will adjust
     ///   as needed until the minimum, collapsed size during scroll. The background doesn't receive touches.
     public init(
         defaultHeight: CGFloat?,
-        isCollapsed: Binding<Bool>? = nil,
+        @ViewBuilder header: () -> Header,
+        @ViewBuilder background: () -> Background
+    ) {
+        self.defaultHeight = defaultHeight
+        self.isCollapsed = nil
+        self.header = header()
+        self.background = background()
+    }
+
+    @available(*, deprecated, renamed: "init(defaultHeight:header:background:)", message: "Prefer the `ParallaxScrollView.init`'s `onCollapsedChanged` callback over the `isCollapsed` binding.")
+    public init(
+        defaultHeight: CGFloat?,
+        isCollapsed: Binding<Bool>?,
         @ViewBuilder header: () -> Header,
         @ViewBuilder background: () -> Background
     ) {
